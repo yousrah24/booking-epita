@@ -39,7 +39,7 @@ jobs:
     name: Static Analysis
     runs-on: ubuntu-latest
     container:
-      image: returntocorp/semgrep@sha256:b5d5a6dd24b2cc3d4aeabae7e533a4a9e05a14d3e7a3ded90f24dd1c8be5e0fb
+      image: returntocorp/semgrep:latest
 
     steps:
       - name: Checkout code
