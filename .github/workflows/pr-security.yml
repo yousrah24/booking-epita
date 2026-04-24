@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Checkout PR commit
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Run osv-scanner (after PR)
         uses: google/osv-scanner-action/osv-scanner-action@v1.9.2
@@ -65,7 +67,9 @@ jobs:
     steps:
       - name: Checkout PR commit
         uses: actions/checkout@v4
-
+        with:
+          fetch-depth: 0
+          
       - name: Run semgrep differential analysis
         run: |
           semgrep \
