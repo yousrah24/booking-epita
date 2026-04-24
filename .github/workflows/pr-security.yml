@@ -27,7 +27,6 @@ jobs:
             --format sarif
             --output after-PR.sarif
             ./
-        continue-on-error: true
 
       - name: Checkout baseline commit
         run: |
@@ -40,7 +39,6 @@ jobs:
             --format sarif
             --output before-PR.sarif
             ./
-        continue-on-error: true
 
       - name: Compare analysis (differential report)
         uses: google/osv-scanner-action/osv-reporter-action@v1.9.2
@@ -50,7 +48,6 @@ jobs:
             --output diff-dependencies.sarif
             --new after-PR.sarif
             --old before-PR.sarif
-        continue-on-error: true
 
       - name: Save differential report as artifact
         uses: actions/upload-artifact@v4
@@ -78,7 +75,6 @@ jobs:
             --output diff-semgrep.sarif \
             --baseline-commit ${{ github.event.pull_request.base.sha }} \
             .
-        continue-on-error: true
 
       - name: Save differential report as artifact
         uses: actions/upload-artifact@v4
