@@ -1,0 +1,59 @@
+name: security
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * *'
+
+permissions:
+  actions: read
+  security-events: write
+  contents: read
+
+jobs:
+  dependencies-analysis:
+    name: Dependencies Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run osv-scanner
+        uses: google/osv-scanner-action/osv-scanner-action@v1.9.2
+        with:
+          scan-args: |-
+            --format sarif
+            --output DependenciesAnalysisFull.sarif
+            ./
+        continue-on-error: true
+
+      - name: Upload dependencies analysis report
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: DependenciesAnalysisFull.sarif
+          category: dependencies-analysis
+
+  static-analysis:
+    name: Static Analysis
+    runs-on: ubuntu-latest
+    container:
+      image: returntocorp/semgrep@sha256:b5d5a6dd24b2cc3d4aeabae7e533a4a9e05a14d3e7a3ded90f24dd1c8be5e0fb
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run semgrep analysis
+        run: |
+          semgrep \
+            --config .semgrep \
+            --sarif \
+            --output SemgrepAnalysis.sarif \
+            .
+        continue-on-error: true
+
+      - name: Upload semgrep analysis report
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: SemgrepAnalysis.sarif
+          category: static-analysis
